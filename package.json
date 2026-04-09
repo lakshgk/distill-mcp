@@ -1,11 +1,11 @@
 {
-  "name": "distill-mcp",
+  "name": "distill-mcp-server",
   "version": "0.1.0",
   "description": "MCP server for Distill — convert documents to token-efficient Markdown in any MCP-compatible client",
   "type": "module",
   "engines": { "node": ">=22.0.0" },
   "bin": {
-    "distill-mcp": "./src/index.js"
+    "distill-mcp-server": "./src/index.js"
   },
   "files": [
     "src/",

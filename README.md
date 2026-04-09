@@ -27,7 +27,7 @@ the Distill service running. See the setup guides for details.
 No global install required:
 
 ```bash
-npx -y distill-mcp
+npx -y distill-mcp-server
 ```
 
 Then configure Claude Desktop — see
@@ -45,7 +45,7 @@ Add the server to your `claude_desktop_config.json`.
   "mcpServers": {
     "distill-mcp": {
       "command": "npx",
-      "args": ["-y", "distill-mcp"],
+      "args": ["-y", "distill-mcp-server"],
       "env": {
         "DISTILL_MCP_CONFIG": "{\"mode\":\"lightweight\",\"python_path\":\"python3\"}"
       }
@@ -61,7 +61,7 @@ Add the server to your `claude_desktop_config.json`.
   "mcpServers": {
     "distill-mcp": {
       "command": "npx",
-      "args": ["-y", "distill-mcp"],
+      "args": ["-y", "distill-mcp-server"],
       "env": {
         "DISTILL_MCP_CONFIG": "{\"mode\":\"lightweight\",\"python_path\":\"py\"}"
       }
@@ -77,7 +77,7 @@ Add the server to your `claude_desktop_config.json`.
   "mcpServers": {
     "distill-mcp": {
       "command": "npx",
-      "args": ["-y", "distill-mcp"],
+      "args": ["-y", "distill-mcp-server"],
       "env": {
         "DISTILL_MCP_CONFIG": "{\"mode\":\"full\",\"distill_url\":\"http://localhost:7860\"}"
       }

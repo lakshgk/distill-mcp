@@ -313,9 +313,9 @@
       <h1>Documents in.<br><span>Markdown out.</span></h1>
       <p>An MCP server that converts local documents to clean, token-efficient Markdown. 40-80% fewer tokens, better LLM reasoning.</p>
 
-      <div class="install-box" onclick="navigator.clipboard.writeText('npx distill-mcp')">
+      <div class="install-box" onclick="navigator.clipboard.writeText('npx distill-mcp-server')">
         <span class="prompt">$</span>
-        <span class="cmd">npx distill-mcp</span>
+        <span class="cmd">npx distill-mcp-server</span>
         <span class="copy">click to copy</span>
       </div>
 
@@ -469,9 +469,9 @@
 
       <div class="code-block">{
   <span class="key">"mcpServers"</span>: {
-    <span class="key">"distill-mcp"</span>: {
+    <span class="key">"distill-mcp-server"</span>: {
       <span class="key">"command"</span>: <span class="str">"npx"</span>,
-      <span class="key">"args"</span>: [<span class="str">"-y"</span>, <span class="str">"distill-mcp"</span>],
+      <span class="key">"args"</span>: [<span class="str">"-y"</span>, <span class="str">"distill-mcp-server"</span>],
       <span class="key">"env"</span>: {
         <span class="key">"DISTILL_MCP_CONFIG"</span>: <span class="str">"{\"mode\":\"lightweight\",\"python_path\":\"python3\"}"</span>
       }
@@ -505,7 +505,7 @@
       <p>
         Built on <a href="https://github.com/nicholasgasior/distill">Distill</a> &middot;
         <a href="https://github.com/lakshgk/distill-mcp">GitHub</a> &middot;
-        <a href="https://www.npmjs.com/package/distill-mcp">npm</a> &middot;
+        <a href="https://www.npmjs.com/package/distill-mcp-server">npm</a> &middot;
         MIT License
       </p>
     </div>

@@ -48,7 +48,7 @@ all lightweight formats plus scanned PDFs (via OCR) and audio transcription.
 No global install required. The server runs via `npx`:
 
 ```bash
-npx -y distill-mcp
+npx -y distill-mcp-server
 ```
 
 ## Configuration
@@ -67,7 +67,7 @@ Add the distill server to the `mcpServers` section.
   "mcpServers": {
     "distill-mcp": {
       "command": "npx",
-      "args": ["-y", "distill-mcp"],
+      "args": ["-y", "distill-mcp-server"],
       "env": {
         "DISTILL_MCP_CONFIG": "{\"mode\":\"full\",\"distill_url\":\"http://localhost:7860\"}"
       }
