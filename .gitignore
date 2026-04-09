@@ -1,0 +1,14 @@
+node_modules/
+.env
+*.log
+.DS_Store
+.claude/
+test/
+CLAUDE.md
+implementation-plan.md
+docs/phase-*-handoff.md
+docs/distill-claude-mcp-spec.md
+docs/distill-context.md
+docs/architecture.md
+docs/status.md
+docs/known-issues.md

@@ -1,0 +1,39 @@
+{
+  "name": "distill-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for Distill — convert documents to token-efficient Markdown in any MCP-compatible client",
+  "type": "module",
+  "engines": { "node": ">=22.0.0" },
+  "bin": {
+    "distill-mcp": "./src/index.js"
+  },
+  "files": [
+    "src/",
+    "docs/lightweight-setup.md",
+    "docs/full-setup.md",
+    "docs/CLAUDE.md-snippet.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "distill",
+    "markdown",
+    "document-conversion",
+    "model-context-protocol"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lakshgk/distill-mcp"
+  },
+  "homepage": "https://github.com/lakshgk/distill-mcp#readme"
+}

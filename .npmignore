@@ -1,0 +1,12 @@
+tests/
+.github/
+*.test.js
+.env
+.env.*
+docs/phase-*-handoff.md
+docs/distill-claude-mcp-spec.md
+docs/distill-context.md
+docs/known-issues.md
+docs/status.md
+docs/architecture.md
+implementation-plan.md
