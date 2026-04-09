@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>distill-mcp — Document-to-Markdown MCP Server</title>
+  <meta name="description" content="Convert local documents to token-efficient Markdown in any MCP-compatible client. Supports DOCX, PDF, XLSX, PPTX, HTML, audio and more.">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --border: #2a2a2a;
+      --text: #e4e4e4;
+      --text-muted: #888;
+      --accent: #3b82f6;
+      --accent-dim: #1e3a5f;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    nav {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav .logo {
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+    }
+    nav .links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-left: 28px;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    nav .links a:hover { color: var(--text); }
+
+    /* Hero */
+    .hero {
+      padding: 100px 0 80px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+      line-height: 1.1;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 20px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    /* Install box */
+    .install-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 20px;
+      font-family: var(--mono);
+      font-size: 16px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .install-box:hover { border-color: var(--accent); }
+    .install-box .prompt { color: var(--text-muted); }
+    .install-box .cmd { color: var(--green); }
+    .install-box .copy {
+      color: var(--text-muted);
+      font-size: 13px;
+      font-family: var(--sans);
+      border-left: 1px solid var(--border);
+      padding-left: 12px;
+    }
+
+    /* Clients */
+    .clients {
+      margin-top: 32px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .clients strong { color: var(--text); font-weight: 500; }
+
+    /* Modes */
+    .modes {
+      padding: 80px 0;
+    }
+    .section-title {
+      font-size: 32px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .section-sub {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+      font-size: 16px;
+    }
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .mode-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+    }
+    .mode-card h3 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+    .mode-card .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+    .badge-light {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--green);
+    }
+    .badge-full {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--accent);
+    }
+    .mode-card .req {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .mode-card ul {
+      list-style: none;
+      font-size: 15px;
+    }
+    .mode-card ul li {
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mode-card ul li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .mode-card.light ul li::before { background: var(--green); }
+    .mode-card.full ul li::before { background: var(--accent); }
+
+    /* Formats */
+    .formats { padding: 80px 0; }
+    .format-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+    .format-table th {
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .format-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .format-table td:first-child {
+      font-weight: 500;
+    }
+    .format-table .ext {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .check { color: var(--green); }
+    .cross { color: #555; }
+
+    /* How it works */
+    .how {
+      padding: 80px 0;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+    .step-num {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .step h4 {
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+    .step p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Config */
+    .config { padding: 80px 0; }
+    .code-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .code-block .key { color: var(--accent); }
+    .code-block .str { color: var(--green); }
+    .code-block .comment { color: var(--text-muted); }
+
+    /* Footer */
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--text); }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      .hero h1 { font-size: 32px; }
+      .hero p { font-size: 17px; }
+      .mode-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .install-box { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="#" class="logo">distill-mcp</a>
+      <div class="links">
+        <a href="#modes">Modes</a>
+        <a href="#formats">Formats</a>
+        <a href="#setup">Setup</a>
+        <a href="https://github.com/lakshgk/distill-mcp">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Documents in.<br><span>Markdown out.</span></h1>
+      <p>An MCP server that converts local documents to clean, token-efficient Markdown. 40&ndash;80% fewer tokens, better LLM reasoning.</p>
+
+      <div class="install-box" onclick="navigator.clipboard.writeText('npx distill-mcp')">
+        <span class="prompt">$</span>
+        <span class="cmd">npx distill-mcp</span>
+        <span class="copy">click to copy</span>
+      </div>
+
+      <div class="clients">
+        Works with <strong>Claude Desktop</strong>, <strong>Claude Code</strong>,
+        <strong>Cursor</strong>, <strong>Windsurf</strong>, and any MCP client
+      </div>
+    </div>
+  </section>
+
+  <section class="modes" id="modes">
+    <div class="container">
+      <h2 class="section-title">Two modes. One tool.</h2>
+      <p class="section-sub">Choose based on what you need. Switch anytime.</p>
+
+      <div class="mode-grid">
+        <div class="mode-card light">
+          <span class="badge badge-light">Lightweight</span>
+          <h3>Python only</h3>
+          <p class="req">Requires: Python 3 + pip install distill-core</p>
+          <ul>
+            <li>DOCX, DOC, ODT</li>
+            <li>XLSX, XLSM, CSV</li>
+            <li>PPTX, PPT</li>
+            <li>PDF (native text)</li>
+            <li>HTML</li>
+            <li>~2 min setup</li>
+          </ul>
+        </div>
+
+        <div class="mode-card full">
+          <span class="badge badge-full">Full</span>
+          <h3>Docker powered</h3>
+          <p class="req">Requires: Docker + Distill service</p>
+          <ul>
+            <li>Everything in lightweight</li>
+            <li>Scanned PDFs (OCR)</li>
+            <li>Audio: MP3, WAV, M4A, FLAC, OGG</li>
+            <li>EPUB, JSON, SQL, WSDL</li>
+            <li>Quality score (0.0 &ndash; 1.0)</li>
+            <li>~10 min setup</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="formats" id="formats">
+    <div class="container">
+      <h2 class="section-title">Supported formats</h2>
+      <p class="section-sub">Validate before conversion. Unsupported files never leave your machine.</p>
+
+      <table class="format-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Extensions</th>
+            <th>Lightweight</th>
+            <th>Full</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Word</td>
+            <td class="ext">.docx .doc .odt</td>
+            <td class="check">&#10003;</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td>Excel</td>
+            <td class="ext">.xlsx .xlsm .csv</td>
+            <td class="check">&#10003;</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td>PowerPoint</td>
+            <td class="ext">.pptx .ppt</td>
+            <td class="check">&#10003;</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td>PDF (native)</td>
+            <td class="ext">.pdf</td>
+            <td class="check">&#10003;</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td>PDF (scanned)</td>
+            <td class="ext">.pdf</td>
+            <td class="cross">&mdash;</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td>HTML</td>
+            <td class="ext">.html .htm</td>
+            <td class="check">&#10003;</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td>Audio</td>
+            <td class="ext">.mp3 .wav .m4a .flac .ogg</td>
+            <td class="cross">&mdash;</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td>EPUB</td>
+            <td class="ext">.epub</td>
+            <td class="cross">&mdash;</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td>Data</td>
+            <td class="ext">.json .sql .wsdl .wsd</td>
+            <td class="cross">&mdash;</td>
+            <td class="check">&#10003;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="container">
+      <h2 class="section-title">How it works</h2>
+      <p class="section-sub">Three steps. No uploads. Everything stays local.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h4>Give a file path</h4>
+          <p>Tell your MCP client to convert a local file. Provide the absolute path &mdash; no need to upload anything.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h4>Distill converts</h4>
+          <p>The server sends the file to Distill (locally via Python or Docker). Clean Markdown comes back.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h4>Cached &amp; ready</h4>
+          <p>The Markdown is cached locally and returned to the LLM. Repeated conversions are instant.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="config" id="setup">
+    <div class="container">
+      <h2 class="section-title">Quick setup</h2>
+      <p class="section-sub">Add to your MCP client config. Here's Claude Desktop as an example.</p>
+
+      <div class="code-block">{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"distill-mcp"</span>: {
+      <span class="key">"command"</span>: <span class="str">"npx"</span>,
+      <span class="key">"args"</span>: [<span class="str">"-y"</span>, <span class="str">"distill-mcp"</span>],
+      <span class="key">"env"</span>: {
+        <span class="key">"DISTILL_MCP_CONFIG"</span>: <span class="str">"{\"mode\":\"lightweight\",\"python_path\":\"python3\"}"</span>
+      }
+    }
+  }
+}
+
+<span class="comment">// Windows: change python_path to "py"
+// Full mode: change mode to "full" and add distill_url</span></div>
+
+      <p style="text-align:center; margin-top:24px; font-size:14px; color:var(--text-muted);">
+        Full setup guides:
+        <a href="https://github.com/lakshgk/distill-mcp/blob/main/docs/lightweight-setup.md" style="color:var(--accent);text-decoration:none;">Lightweight</a> &middot;
+        <a href="https://github.com/lakshgk/distill-mcp/blob/main/docs/full-setup.md" style="color:var(--accent);text-decoration:none;">Full (Docker)</a>
+      </p>
+    </div>
+  </section>
+
+  <section style="padding:80px 0;text-align:center;">
+    <div class="container">
+      <h2 class="section-title">Privacy first</h2>
+      <p style="color:var(--text-muted);max-width:540px;margin:12px auto 0;font-size:16px;">
+        All processing happens on your machine. Lightweight mode uses a local Python library.
+        Full mode runs Docker locally. No data is sent to external services.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>
+        Built on <a href="https://github.com/nicholasgasior/distill">Distill</a> &middot;
+        <a href="https://github.com/lakshgk/distill-mcp">GitHub</a> &middot;
+        <a href="https://www.npmjs.com/package/distill-mcp">npm</a> &middot;
+        MIT License
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
