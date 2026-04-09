@@ -3,24 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>distill-mcp — Document-to-Markdown MCP Server</title>
+  <title>distill-mcp - Document-to-Markdown MCP Server</title>
   <meta name="description" content="Convert local documents to token-efficient Markdown in any MCP-compatible client. Supports DOCX, PDF, XLSX, PPTX, HTML, audio and more.">
   <style>
     :root {
-      --bg: #0a0a0a;
-      --surface: #141414;
-      --border: #2a2a2a;
-      --text: #e4e4e4;
-      --text-muted: #888;
-      --accent: #3b82f6;
-      --accent-dim: #1e3a5f;
-      --green: #22c55e;
-      --amber: #f59e0b;
-      --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
-      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --bg: #ffffff;
+      --surface: #f8fafc;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --accent: #6366f1;
+      --accent-dim: #e0e7ff;
+      --green: #059669;
+      --amber: #d97706;
+      --mono: 'SFMono-Regular', Consolas, 'Cascadia Code', monospace;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
@@ -36,6 +37,11 @@
     nav {
       padding: 20px 0;
       border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     nav .container {
       display: flex;
@@ -153,11 +159,11 @@
       margin-bottom: 16px;
     }
     .badge-light {
-      background: rgba(34, 197, 94, 0.15);
+      background: #ecfdf5;
       color: var(--green);
     }
     .badge-full {
-      background: rgba(59, 130, 246, 0.15);
+      background: #eef2ff;
       color: var(--accent);
     }
     .mode-card .req {
@@ -215,7 +221,7 @@
       color: var(--text-muted);
     }
     .check { color: var(--green); }
-    .cross { color: #555; }
+    .cross { color: #cbd5e1; }
 
     /* How it works */
     .how {
@@ -305,7 +311,7 @@
   <section class="hero">
     <div class="container">
       <h1>Documents in.<br><span>Markdown out.</span></h1>
-      <p>An MCP server that converts local documents to clean, token-efficient Markdown. 40&ndash;80% fewer tokens, better LLM reasoning.</p>
+      <p>An MCP server that converts local documents to clean, token-efficient Markdown. 40-80% fewer tokens, better LLM reasoning.</p>
 
       <div class="install-box" onclick="navigator.clipboard.writeText('npx distill-mcp')">
         <span class="prompt">$</span>
@@ -349,7 +355,7 @@
             <li>Scanned PDFs (OCR)</li>
             <li>Audio: MP3, WAV, M4A, FLAC, OGG</li>
             <li>EPUB, JSON, SQL, WSDL</li>
-            <li>Quality score (0.0 &ndash; 1.0)</li>
+            <li>Quality score (0.0 - 1.0)</li>
             <li>~10 min setup</li>
           </ul>
         </div>
@@ -399,7 +405,7 @@
           <tr>
             <td>PDF (scanned)</td>
             <td class="ext">.pdf</td>
-            <td class="cross">&mdash;</td>
+            <td class="cross">-</td>
             <td class="check">&#10003;</td>
           </tr>
           <tr>
@@ -411,19 +417,19 @@
           <tr>
             <td>Audio</td>
             <td class="ext">.mp3 .wav .m4a .flac .ogg</td>
-            <td class="cross">&mdash;</td>
+            <td class="cross">-</td>
             <td class="check">&#10003;</td>
           </tr>
           <tr>
             <td>EPUB</td>
             <td class="ext">.epub</td>
-            <td class="cross">&mdash;</td>
+            <td class="cross">-</td>
             <td class="check">&#10003;</td>
           </tr>
           <tr>
             <td>Data</td>
             <td class="ext">.json .sql .wsdl .wsd</td>
-            <td class="cross">&mdash;</td>
+            <td class="cross">-</td>
             <td class="check">&#10003;</td>
           </tr>
         </tbody>
@@ -440,7 +446,7 @@
         <div class="step">
           <div class="step-num">01</div>
           <h4>Give a file path</h4>
-          <p>Tell your MCP client to convert a local file. Provide the absolute path &mdash; no need to upload anything.</p>
+          <p>Tell your MCP client to convert a local file. Provide the absolute path - no need to upload anything.</p>
         </div>
         <div class="step">
           <div class="step-num">02</div>
