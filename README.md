@@ -2,6 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/distill-mcp-server)](https://www.npmjs.com/package/distill-mcp-server)
 [![license](https://img.shields.io/npm/l/distill-mcp-server)](LICENSE)
+[![MCP Registry](https://img.shields.io/badge/MCP_Registry-listed-blue)](https://registry.modelcontextprotocol.io/)
 
 An MCP server that connects any MCP-compatible client to Distill, converting
 local documents to clean, token-efficient Markdown before the LLM reads them.
